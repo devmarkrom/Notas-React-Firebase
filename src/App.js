@@ -1,25 +1,89 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
-
+import Note from './components/Note/Note'
+import NoteForm from './components/NoteForm/NoteForm';
 class App extends Component {
+
+  constructor() {
+    super();
+    this.state = {
+      notes: [
+        /* {noteId: 1, noteContent: 'nota 1'},
+        {noteId: 2, noteContent: 'nota 2'} */
+      ]
+    };
+    this.addNote = this.addNote.bind(this);
+		this.removeNote = this.removeNote.bind(this);
+
+		// db connection
+		this.app = firebase.initializeApp(DB_CONFIG);
+		this.db = this.app.database().ref().child('notes');
+  }
+
+  componentDidMount() {
+		const { notes } = this.state;
+		this.db.on('child_added', snap => {
+			notes.push({
+				noteId: snap.key,
+				noteContent: snap.val().noteContent
+			});
+
+			this.setState({notes});
+		});
+
+		this.db.on('child_removed', snap => {
+			for(let i = 0; i < notes.length; i++) {
+				if(notes[i].noteId === snap.key) {
+					notes.splice(i , 1);
+				}
+			}
+			console.log(notes);
+			this.setState({notes});
+		});
+
+  }
+  
+  addNote(note) {
+		/*
+		let { notes } = this.state;
+		notes.push({
+			noteId: notes.length + 1,
+			noteContent: note
+		});
+		this.setState({
+			notes
+		});
+		*/
+		this.db.push().set({noteContent: note});
+	}	
+
+	removeNote(noteId) {
+		this.db.child(noteId).remove();
+	}
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div className="notesContainer">
+        <div className="notesHeader">
+          <h1>React y Firebase App</h1>
+        </div>
+        <div className="notesBody">
+          <ul>
+            {
+              this.state.notes.map(note => {
+                return (
+                  <Note
+                    noteContent={note.noteContent}
+                    noteId={note.noteId}
+                    key={note.noteId}
+                    />
+                )
+              })
+            }
+          </ul>
+        </div>
+        <div className="notesFooter">
+        <NoteForm addNote={this.addNote}/>
+        </div>
       </div>
     );
   }
