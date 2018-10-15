@@ -32,19 +32,19 @@ class NoteForm extends Component {
     render() {
         return(
             <div className="NoteForm">
-            <input
-                placeholder="Write a new Note"
-                className="noteInput"
-                ref={input => { this.textInput = input;}}
-                value={this.state.newNoteText}
-                onChange={this.handleUserInput}
-                type="text"/>
-            <button 
-                onClick={this.addNote}
-                className="noteButton">
-                Add Note
-            </button>
-        </div>
+                <input
+                    placeholder="Write a new Note"
+                    className="noteInput"
+                    ref={input => { this.textInput = input;}}
+                    value={this.state.newNoteText}
+                    onChange={this.handleUserInput}
+                    type="text"/>
+                <button 
+                    onClick={this.addNote}
+                    className="noteButton">
+                    Add Note
+                </button>
+            </div>
         )
     }
 }

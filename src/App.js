@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
 import './App.css';
+
+import firebase from 'firebase';
+import { DB_CONFIG } from './config/config';
+import 'firebase/database';
+
 import Note from './components/Note/Note'
 import NoteForm from './components/NoteForm/NoteForm';
 class App extends Component {
@@ -75,6 +80,7 @@ class App extends Component {
                     noteContent={note.noteContent}
                     noteId={note.noteId}
                     key={note.noteId}
+                    removeNote={this.removeNote}
                     />
                 )
               })
